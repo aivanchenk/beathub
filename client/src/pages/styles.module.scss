@@ -1,0 +1,70 @@
+.page {
+  display: flex;
+  padding: 20px;
+  background-color: #f5f5f5;
+  height: calc(100vh - 40px);
+  overflow: hidden;
+}
+
+main {
+  width: 75%;
+  overflow: auto;
+}
+
+h1 {
+  margin-bottom: 32px;
+}
+
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  min-width: 250px;
+  transition: transform 0.2s;
+  text-decoration: none;
+  color: black;
+  cursor: pointer;
+
+  &.el3 {
+    flex: 1 1 calc(33.333% - 20px);
+  }
+
+  &.el1 {
+    flex: 1 1 calc(100% - 20px);
+  }
+
+  h2 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+  }
+
+  p {
+    margin: 5px 0;
+  }
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+.headerRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+button.delete {
+  padding: 10px 16px;
+  background-color: #3b5998;
+  color: white;
+  border-radius: 8px;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #2d384f;
+    transition: all 0.3s ease-in-out;
+  }
+}
