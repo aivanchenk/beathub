@@ -43,6 +43,11 @@ class User {
     db.query(sql, [songId], callback);
   }
 
+  static getUserByEmail(email, callback) {
+    const sql = "SELECT * from users WHERE email = ?";
+    db.query(sql, [email], callback); 
+  }
+
   //Other user-related methods
 }
 

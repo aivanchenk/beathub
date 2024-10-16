@@ -1,6 +1,8 @@
 const User = require("../models/User");
 const Song = require("../models/Song");
 const Playlist = require("../models/Playlist");
+const bcrypt = require("bcrypt");
+const saltRounds = process.env.SALT_ROUNDS || 10;
 
 exports.getAllUsers = (req, res) => {
   User.getAllUsers((err, results) => {
@@ -67,8 +69,10 @@ exports.updateUserById = (req, res) => {
   });
 };
 
-exports.addUser = (req, res) => {
+exports.addUser = async (req, res) => {
   const userData = req.body;
+  const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
+  userData.password_hash = hashedPassword;
 
   User.addUser(userData, (err, result) => {
     if (err) {
