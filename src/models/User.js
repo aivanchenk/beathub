@@ -9,6 +9,10 @@ class User {
     db.query("SELECT * FROM users WHERE user_id = ?", [userId], callback);
   }
 
+  static getUserByEmail(userEmail, callback) {
+    db.query("SELECT * FROM users WHERE email = ?", [userEmail], callback);
+  }
+
   static addUser(userData, callback) {
     const { username, email, password_hash, role } = userData;
     const sql =
@@ -45,7 +49,7 @@ class User {
 
   static getUserByEmail(email, callback) {
     const sql = "SELECT * from users WHERE email = ?";
-    db.query(sql, [email], callback); 
+    db.query(sql, [email], callback);
   }
 
   //Other user-related methods
