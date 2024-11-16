@@ -6,10 +6,12 @@ const userRoutes = require("./src/routes/UserRoutes");
 const songRoutes = require("./src/routes/SongRoutes");
 const playlistRoutes = require("./src/routes/PlaylistRouter");
 const authRoutes = require("./src/routes/AuthRouter");
-const db = require("./src/config/db");
+require("dotenv").config();
 
 const app = express();
 const PORT = 5000;
+
+app.use(express.json({ extended: false }));
 
 app.use(cors());
 app.use(bodyParser.json());

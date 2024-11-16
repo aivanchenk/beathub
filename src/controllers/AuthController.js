@@ -1,48 +1,113 @@
-const User = require("../models/User");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const db = require("../config/db");
 
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
+// User Registration
+exports.register = async (req, res) => {
+  const { username, email, password } = req.body;
 
-exports.login = async (req, res) => {
-  console.log("Request Body:", req.body);
-  const { email, password } = req.body;
+  try {
+    // Check if user already exists
+    db.query(
+      "SELECT * FROM users WHERE email = ?",
+      [email],
+      async (err, results) => {
+        if (err) {
+          console.error("Error querying the database:", err);
+          return res.status(500).send("Server error");
+        }
 
-  User.getUserByEmail(email, async (err, results) => {
-    if (err || results.length === 0) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
+        if (results.length > 0) {
+          return res.status(400).json({ msg: "User already exists" });
+        }
 
-    const user = results[0];
-    const match = await bcrypt.compare(password, user.password_hash);
+        // Encrypt password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
-    if (!match) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
+        // Insert new user into the database
+        db.query(
+          "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)",
+          [username, email, hashedPassword],
+          (err, result) => {
+            if (err) {
+              console.error("Error inserting user into database:", err);
+              return res.status(500).send("Server error");
+            }
 
-    const token = jwt.sign(
-      { userId: user.user_id, role: user.role },
-      JWT_SECRET,
-      { expiresIn: "1h" }
+            // Create token with the correct ID field from the database insert
+            const payload = {
+              user: {
+                id: result.insertId, // Use result.insertId to get the newly generated user ID
+              },
+            };
+
+            jwt.sign(
+              payload,
+              process.env.JWT_SECRET,
+              { expiresIn: process.env.JWT_EXPIRES_IN },
+              (err, token) => {
+                if (err) throw err;
+                res.json({ token });
+              }
+            );
+          }
+        );
+      }
     );
-
-    res.status(200).json({ token });
-  });
+  } catch (err) {
+    console.error("Error caught in try/catch block:", err);
+    res.status(500).send("Server error");
+  }
 };
 
-exports.protect = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
+// User Login
+exports.login = (req, res) => {
+  const { email, password } = req.body;
 
-  if (!token) {
-    return res.status(401).json({ error: "Unauthorized" });
+  try {
+    // Check if user exists in the database
+    db.query(
+      "SELECT * FROM users WHERE email = ?",
+      [email],
+      async (err, results) => {
+        if (err) {
+          console.error("Error querying the database:", err);
+          return res.status(500).send("Server error");
+        }
+
+        if (results.length === 0) {
+          return res.status(400).json({ msg: "Invalid Credentials" });
+        }
+
+        const user = results[0];
+
+        // Compare passwords
+        const isMatch = await bcrypt.compare(password, user.password_hash);
+        if (!isMatch) {
+          return res.status(400).json({ msg: "Invalid Credentials" });
+        }
+
+        // Create token with the correct user_id field
+        const payload = {
+          user: {
+            id: user.user_id, // Use user.user_id to get the user's ID from the database
+          },
+        };
+
+        jwt.sign(
+          payload,
+          process.env.JWT_SECRET,
+          { expiresIn: process.env.JWT_EXPIRES_IN },
+          (err, token) => {
+            if (err) throw err;
+            res.json({ token });
+          }
+        );
+      }
+    );
+  } catch (err) {
+    console.error("Error caught in try/catch block:", err);
+    res.status(500).send("Server error");
   }
-
-  jwt.verify(token, JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(403).json({ error: "Forbidden" });
-    }
-
-    req.user = decoded;
-    next();
-  });
 };
