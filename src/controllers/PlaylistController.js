@@ -97,19 +97,87 @@ exports.deletePlaylist = (req, res) => {
   });
 };
 
-exports.deleteSongFromPlaylist = (req, res) => {
-  const { id, songId } = req.params;
+exports.addSongToPlaylist = async (req, res) => {
+  const { playlistId, songId } = req.body;
 
-  Playlist.removeSongFromPlaylist(id, songId, (err, result) => {
+  console.log("addSongToPlaylist");
+
+  try {
+    Playlist.getPlaylistById(playlistId, (err, playlistResults) => {
+      if (err) {
+        console.error("Error querying playlist:", err);
+        return res.status(500).send("Server error");
+      }
+
+      if (playlistResults.length === 0) {
+        return res.status(404).json({ msg: "Playlist not found" });
+      }
+
+      Song.getSongById(songId, (err, songResults) => {
+        if (err) {
+          console.error("Error querying song:", err);
+          return res.status(500).send("Server error");
+        }
+
+        if (songResults.length === 0) {
+          return res.status(404).json({ msg: "Song not found" });
+        }
+
+        Playlist.isSongInPlaylist(playlistId, songId, (err, results) => {
+          if (err) {
+            console.error("Error checking song in playlist:", err);
+            return res.status(500).send("Server error");
+          }
+
+          if (results.length > 0) {
+            return res.status(400).json({ msg: "Song already in playlist" });
+          }
+
+          Playlist.addSongToPlaylist(playlistId, songId, (err) => {
+            if (err) {
+              console.error("Error adding song to playlist:", err);
+              return res.status(500).send("Server error");
+            }
+
+            res.json({ msg: "Song added to playlist successfully" });
+          });
+        });
+      });
+    });
+  } catch (err) {
+    console.error("Error caught in try/catch block:", err);
+    res.status(500).send("Server error");
+  }
+};
+
+exports.deleteSongFromPlaylist = (req, res) => {
+  const { playlistId, songId } = req.body;
+
+  console.log("Deleting song from playlist:", playlistId, songId);
+
+  Playlist.isSongInPlaylist(playlistId, songId, (err, results) => {
     if (err) {
+      console.error("Error querying database:", err);
       return res.status(500).json({ error: "Database error" });
     }
-    if (result.affectedRows > 0) {
-      return res.status(200).json({ message: "Song deleted successfully." });
-    } else {
+
+    if (results.length === 0) {
       return res
         .status(404)
         .json({ message: "Song not found in the playlist." });
     }
+
+    Playlist.removeSongFromPlaylist(playlistId, songId, (err, result) => {
+      if (err) {
+        console.error("Error deleting song from playlist:", err);
+        return res
+          .status(500)
+          .json({ error: "Failed to remove song from playlist" });
+      }
+
+      return res
+        .status(200)
+        .json({ message: "Song removed from playlist successfully." });
+    });
   });
 };

@@ -1,6 +1,8 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
 // User Registration
 exports.register = async (req, res) => {
@@ -101,6 +103,131 @@ exports.login = (req, res) => {
           res.json({ token });
         }
       );
+    });
+  } catch (err) {
+    console.error("Error caught in try/catch block:", err);
+    res.status(500).send("Server error");
+  }
+};
+
+exports.requestPasswordReset = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Check if user exists
+    User.getUserByEmail(email, (err, results) => {
+      if (err) {
+        console.error("Error querying the database:", err);
+        return res.status(500).send("Server error");
+      }
+
+      if (results.length === 0) {
+        return res.status(404).json({ msg: "User not found" });
+      }
+
+      const user = results[0];
+
+      // Generate a unique 6-digit reset code
+      const resetCode = crypto.randomInt(100000, 999999); // 6-digit random number
+      const expiryTime = Date.now() + 10 * 60 * 1000; // Code valid for 10 minutes
+
+      // Store the code and expiration in the database
+      const updateData = {
+        reset_code: resetCode,
+        reset_code_expiry: expiryTime,
+      };
+
+      User.updateUserById(user.user_id, updateData, (err) => {
+        if (err) {
+          console.error("Error storing reset code:", err);
+          return res.status(500).send("Server error");
+        }
+
+        // Create a Nodemailer transporter
+        const transporter = nodemailer.createTransport({
+          host: "sandbox.smtp.mailtrap.io",
+          port: 2525,
+          auth: {
+            user: "6d8d9d2717b855", // Your Mailtrap username
+            pass: "8037550ecb8835", // Your Mailtrap password
+          },
+        });
+
+        // Email options
+        const mailOptions = {
+          from: '"Beathub Support" <support@beathub.com>', // Sender address
+          to: email, // Recipient address
+          subject: "Password Reset Code",
+          html: `
+            <p>Hello ${user.username},</p>
+            <p>You requested to reset your password. Use the following code to reset your password:</p>
+            <p><b>${resetCode}</b></p>
+            <p>This code is valid for 10 minutes. If you didn't request a password reset, please ignore this email.</p>
+          `,
+        };
+
+        // Send the email
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.error("Error sending email:", error);
+            return res.status(500).json({ msg: "Failed to send email" });
+          }
+
+          console.log("Email sent:", info.response);
+          res.json({ msg: "Password reset code sent to your email." });
+        });
+      });
+    });
+  } catch (err) {
+    console.error("Error caught in try/catch block:", err);
+    res.status(500).send("Server error");
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  const { email, code, newPassword } = req.body;
+
+  try {
+    // Fetch user by email
+    User.getUserByEmail(email, async (err, results) => {
+      if (err) {
+        console.error("Error querying the database:", err);
+        return res.status(500).send("Server error");
+      }
+
+      if (results.length === 0) {
+        return res.status(404).json({ msg: "User not found" });
+      }
+
+      const user = results[0];
+
+      // Check if the reset code is valid
+      if (
+        user.reset_code !== parseInt(code) ||
+        user.reset_code_expiry < Date.now()
+      ) {
+        return res.status(400).json({ msg: "Invalid or expired reset code" });
+      }
+
+      // Hash the new password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+      // Update the password and clear the reset code
+      const updateData = {
+        password_hash: hashedPassword,
+        reset_code: null,
+        reset_code_expiry: null,
+      };
+
+      User.updateUserById(user.user_id, updateData, (err) => {
+        if (err) {
+          console.error("Error updating user password:", err);
+          return res.status(500).send("Server error");
+        }
+
+        res.json({ msg: "Password reset successful." });
+      });
     });
   } catch (err) {
     console.error("Error caught in try/catch block:", err);

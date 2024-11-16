@@ -8,6 +8,8 @@ router.get("/:id/songs", PlaylistController.getSongsByPlaylistId);
 router.post("/", PlaylistController.addPlaylist);
 router.put("/:id", PlaylistController.updatePlaylistById);
 router.delete("/:id", PlaylistController.deletePlaylist);
-router.delete("/:id/songs/:songId", PlaylistController.deletePlaylist);
+
+router.post("/add-song", PlaylistController.addSongToPlaylist);
+router.post("/remove-song", PlaylistController.deleteSongFromPlaylist);
 
 module.exports = router;

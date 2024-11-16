@@ -55,15 +55,22 @@ class Playlist {
     db.query(sql, [playlistId], callback);
   }
 
+  static addSongToPlaylist(playlistId, songId, callback) {
+    const sql =
+      "INSERT INTO playlist_songs (playlist_id, song_id) VALUES (?, ?)";
+    db.query(sql, [playlistId, songId], callback);
+  }
+
   static removeSongFromPlaylist(playlistId, songId, callback) {
     const sql =
       "DELETE FROM playlist_songs WHERE playlist_id = ? AND song_id = ?";
-    db.query(sql, [playlistId, songId], (err, results) => {
-      if (err) {
-        return callback(err);
-      }
-      callback(null, results);
-    });
+    db.query(sql, [playlistId, songId], callback);
+  }
+
+  static isSongInPlaylist(playlistId, songId, callback) {
+    const sql =
+      "SELECT * FROM playlist_songs WHERE playlist_id = ? AND song_id = ?";
+    db.query(sql, [playlistId, songId], callback);
   }
 }
 
