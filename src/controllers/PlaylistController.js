@@ -100,8 +100,6 @@ exports.deletePlaylist = (req, res) => {
 exports.addSongToPlaylist = async (req, res) => {
   const { playlistId, songId } = req.body;
 
-  console.log("addSongToPlaylist");
-
   try {
     Playlist.getPlaylistById(playlistId, (err, playlistResults) => {
       if (err) {
@@ -152,8 +150,6 @@ exports.addSongToPlaylist = async (req, res) => {
 
 exports.deleteSongFromPlaylist = (req, res) => {
   const { playlistId, songId } = req.body;
-
-  console.log("Deleting song from playlist:", playlistId, songId);
 
   Playlist.isSongInPlaylist(playlistId, songId, (err, results) => {
     if (err) {

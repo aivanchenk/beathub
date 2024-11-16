@@ -7,6 +7,7 @@ const songRoutes = require("./src/routes/SongRoutes");
 const playlistRoutes = require("./src/routes/PlaylistRouter");
 const authRoutes = require("./src/routes/AuthRouter");
 const searchRoutes = require("./src/routes/SearchRoutes");
+const feedbackRotes = require("./src/routes/FeedbackRouter");
 
 require("dotenv").config();
 
@@ -27,6 +28,7 @@ app.use("/api/songs", songRoutes);
 app.use("/api/playlists", playlistRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/search", searchRoutes);
+app.use("/api/feedback", feedbackRotes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
