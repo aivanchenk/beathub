@@ -86,6 +86,35 @@ class Song {
     `;
     db.query(sql, [songId, songId], callback);
   }
+
+  static verifySongOwnership(songId, userId, callback) {
+    const sql = `
+    SELECT * FROM songs WHERE song_id = ? AND added_by = ?
+  `;
+    db.query(sql, [songId, userId], callback);
+  }
+
+  static deleteSongReferencesFromPlaylists(songId, callback) {
+    const sql = `
+      DELETE FROM playlist_songs WHERE song_id = ?
+    `;
+    db.query(sql, [songId], callback);
+  }
+
+  // Delete references to the song in song_likes
+  static deleteSongReferencesFromLikes(songId, callback) {
+    const sql = `
+      DELETE FROM song_likes WHERE song_id = ?
+    `;
+    db.query(sql, [songId], callback);
+  }
+
+  static deleteSongReferencesFromAlbums(songId, callback) {
+    const sql = `
+      DELETE FROM album_songs WHERE song_id = ?
+    `;
+    db.query(sql, [songId], callback);
+  }
 }
 
 module.exports = Song;

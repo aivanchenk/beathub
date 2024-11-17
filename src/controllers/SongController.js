@@ -30,45 +30,133 @@ exports.addSong = (req, res) => {
 };
 
 exports.deleteSong = (req, res) => {
-  const { id } = req.params;
+  const { id: userId, role } = req.user; // Extract user ID and role from the token
+  const { id: songId } = req.params;
 
-  Song.deleteSongById(id, (err, result) => {
-    if (err) {
-      if (err.code === "ER_ROW_IS_REFERENCED_2") {
-        return res.status(400).json({
-          error: "Cannot delete song as it is used in a playlist",
+  if (!songId) {
+    return res.status(400).json({ error: "Song ID is required" });
+  }
+
+  const deleteSongAndReferences = () => {
+    // Step 1: Delete references from playlist_songs
+    Song.deleteSongReferencesFromPlaylists(songId, (err) => {
+      if (err) {
+        console.error("Error deleting song references from playlists:", err);
+        return res
+          .status(500)
+          .json({ error: "Error deleting song references from playlists" });
+      }
+
+      // Step 2: Delete references from song_likes
+      Song.deleteSongReferencesFromLikes(songId, (err) => {
+        if (err) {
+          console.error("Error deleting song references from likes:", err);
+          return res
+            .status(500)
+            .json({ error: "Error deleting song references from likes" });
+        }
+
+        // Step 3: Delete references from album_songs
+        Song.deleteSongReferencesFromAlbums(songId, (err) => {
+          if (err) {
+            console.error("Error deleting song references from albums:", err);
+            return res
+              .status(500)
+              .json({ error: "Error deleting song references from albums" });
+          }
+
+          // Step 4: Delete the song itself
+          Song.deleteSongById(songId, (err, result) => {
+            if (err) {
+              console.error("Error deleting song:", err);
+              return res.status(500).json({ error: "Error deleting song" });
+            }
+
+            if (result.affectedRows === 0) {
+              return res.status(404).json({ message: "Song not found" });
+            }
+
+            return res
+              .status(200)
+              .json({ message: "Song deleted successfully" });
+          });
+        });
+      });
+    });
+  };
+
+  if (role === "admin") {
+    // Admins can delete any song
+    deleteSongAndReferences();
+  } else {
+    // Authors can delete only their own songs
+    Song.verifySongOwnership(songId, userId, (err, results) => {
+      if (err) {
+        console.error("Error verifying song ownership:", err);
+        return res
+          .status(500)
+          .json({ error: "Error verifying song ownership" });
+      }
+
+      if (results.length === 0) {
+        return res.status(403).json({
+          error: "You can only delete songs you created",
         });
       }
-      return res.status(500).json({ error: "Error deleting song" });
-    }
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Song not found" });
-    }
-
-    res.status(201).json({
-      message: "Song deleted successfully",
+      deleteSongAndReferences();
     });
-  });
+  }
 };
 
 exports.updateSong = (req, res) => {
-  const { id } = req.params;
+  const { id: userId, role } = req.user; // Extract user ID and role from the token
+  const { id: songId } = req.params;
   const data = req.body;
 
-  Song.updateSongById(id, data, (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: "Error updating song" });
-    }
+  if (!songId) {
+    return res.status(400).json({ error: "Song ID is required" });
+  }
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Song not found" });
-    }
+  const updateSong = () => {
+    Song.updateSongById(songId, data, (err, result) => {
+      if (err) {
+        console.error("Error updating song:", err);
+        return res.status(500).json({ error: "Error updating song" });
+      }
 
-    res.status(200).json({
-      message: "Song updated successfully",
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Song not found" });
+      }
+
+      res.status(200).json({
+        message: "Song updated successfully",
+      });
     });
-  });
+  };
+
+  if (role === "admin") {
+    // Admins can update any song
+    updateSong();
+  } else {
+    // Authors can update only their own songs
+    Song.verifySongOwnership(songId, userId, (err, results) => {
+      if (err) {
+        console.error("Error verifying song ownership:", err);
+        return res
+          .status(500)
+          .json({ error: "Error verifying song ownership" });
+      }
+
+      if (results.length === 0) {
+        return res.status(403).json({
+          error: "You can only update songs you created",
+        });
+      }
+
+      updateSong();
+    });
+  }
 };
 
 exports.getSongById = (req, res) => {
