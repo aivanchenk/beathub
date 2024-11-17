@@ -38,16 +38,19 @@ exports.getFeedbackBySong = (req, res) => {
 
 // Approve feedback
 exports.approveFeedback = (req, res) => {
-  const { feedbackId, adminId } = req.body;
+  const { feedbackId } = req.body;
 
-  if (!feedbackId || !adminId) {
-    return res
-      .status(400)
-      .json({ error: "Feedback ID and Admin ID are required" });
+  console.log("Authenticated user:", req.user);
+
+  const adminId = req.user.id;
+
+  if (!feedbackId) {
+    return res.status(400).json({ error: "Feedback ID is required" });
   }
 
   Feedback.approveFeedback(feedbackId, adminId, (err, result) => {
     if (err) {
+      console.error("Error approving feedback:", err);
       return res.status(500).json({ error: "Database error" });
     }
 
@@ -61,12 +64,12 @@ exports.approveFeedback = (req, res) => {
 
 // Reject feedback
 exports.rejectFeedback = (req, res) => {
-  const { feedbackId, adminId } = req.body;
+  const { feedbackId } = req.body;
 
-  if (!feedbackId || !adminId) {
-    return res
-      .status(400)
-      .json({ error: "Feedback ID and Admin ID are required" });
+  const adminId = req.user.id;
+
+  if (!feedbackId) {
+    return res.status(400).json({ error: "Feedback ID is required" });
   }
 
   Feedback.rejectFeedback(feedbackId, adminId, (err) => {

@@ -52,7 +52,40 @@ class User {
     db.query(sql, [email], callback);
   }
 
-  //Other user-related methods
+  static updateUserData(userId, updates, callback) {
+    const fields = [];
+    const values = [];
+
+    if (updates.newUsername) {
+      fields.push("username = ?");
+      values.push(updates.newUsername);
+    }
+
+    if (updates.newEmail) {
+      fields.push("email = ?");
+      values.push(updates.newEmail);
+    }
+
+    if (fields.length === 0) {
+      return callback({ message: "No fields to update" }, null);
+    }
+
+    const sql = `
+      UPDATE users 
+      SET ${fields.join(", ")} 
+      WHERE user_id = ?;
+    `;
+
+    values.push(userId);
+
+    db.query(sql, values, (err, results) => {
+      if (err) {
+        console.error("SQL Execution Error:", err);
+        return callback(err, null);
+      }
+      callback(null, results);
+    });
+  }
 }
 
 module.exports = User;

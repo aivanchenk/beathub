@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const UserController = require("../controllers/UserController");
+const auth = require("../middleware/auth");
 
 router.get("/:id", UserController.getUserbyId);
 router.get("/", UserController.getAllUsers);
@@ -13,5 +14,7 @@ router.get(
   "/:id/songs-and-playlists",
   UserController.getSongsAndPlaylistsByUserId
 );
+
+router.post("/user-data", auth, UserController.updateUserData);
 
 module.exports = router;

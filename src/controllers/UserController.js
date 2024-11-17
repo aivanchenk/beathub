@@ -108,3 +108,24 @@ exports.deleteUser = (req, res) => {
     });
   });
 };
+
+exports.updateUserData = (req, res) => {
+  const userId = req.user.id;
+  const { newUsername, newEmail } = req.body;
+
+  if (!newUsername && !newEmail) {
+    return res.status(400).json({ error: "New username or email is required" });
+  }
+
+  User.updateUserData(userId, { newUsername, newEmail }, (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: "Database error", details: err });
+    }
+
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({ message: "User data updated successfully" });
+  });
+};
