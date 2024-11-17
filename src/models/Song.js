@@ -24,10 +24,10 @@ class Song {
   }
 
   static addSong(songData, callback) {
-    const { title, artist, album, genre, duration, added_by } = songData;
+    const { title, artist_id, genre, duration, added_by } = songData;
     const sql =
-      "INSERT INTO songs (title, artist, album, genre, duration, added_by) VALUES (?, ?, ?, ?, ?, ?)";
-    db.query(sql, [title, artist, album, genre, duration, added_by], callback);
+      "INSERT INTO songs (name, artist_id, genre, duration, added_by) VALUES (?, ?, ?, ?, ?)";
+    db.query(sql, [title, artist_id, genre, duration, added_by], callback);
   }
 
   static updateSongById(songId, data, callback) {

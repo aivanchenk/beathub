@@ -72,6 +72,39 @@ class Playlist {
       "SELECT * FROM playlist_songs WHERE playlist_id = ? AND song_id = ?";
     db.query(sql, [playlistId, songId], callback);
   }
+
+  static checkLike(userId, playlistId, callback) {
+    const sql = `
+    SELECT * FROM playlist_likes WHERE user_id = ? AND playlist_id = ?
+  `;
+    db.query(sql, [userId, playlistId], callback);
+  }
+
+  static addLike(userId, playlistId, callback) {
+    const sql = `
+    INSERT INTO playlist_likes (user_id, playlist_id, liked_at)
+    VALUES (?, ?, NOW());
+  `;
+    db.query(sql, [userId, playlistId], callback);
+  }
+
+  static removeLike(userId, playlistId, callback) {
+    const sql = `
+    DELETE FROM playlist_likes WHERE user_id = ? AND playlist_id = ?
+  `;
+    db.query(sql, [userId, playlistId], callback);
+  }
+
+  static updateLikeCount(playlistId, callback) {
+    const sql = `
+    UPDATE playlists
+    SET likes_count = (
+      SELECT COUNT(*) FROM playlist_likes WHERE playlist_id = ?
+    )
+    WHERE playlist_id = ?;
+  `;
+    db.query(sql, [playlistId, playlistId], callback);
+  }
 }
 
 module.exports = Playlist;

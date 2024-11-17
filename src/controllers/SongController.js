@@ -13,8 +13,12 @@ exports.getAllSongs = (req, res) => {
 exports.addSong = (req, res) => {
   const songData = req.body;
 
+  // Attach the user ID to the song data
+  songData.added_by = req.user.id;
+
   Song.addSong(songData, (err, result) => {
     if (err) {
+      console.error("Error adding song:", err);
       return res.status(500).json({ error: "Error adding song" });
     }
 

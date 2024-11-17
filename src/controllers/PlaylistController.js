@@ -189,3 +189,58 @@ exports.getPlaylistsByUserId = (req, res) => {
     res.json(results);
   });
 };
+
+exports.toggleLikePlaylist = (req, res) => {
+  const userId = req.user.id;
+  const { playlistId } = req.body;
+  Playlist.checkLike(userId, playlistId, (err, results) => {
+    if (err) {
+      console.error("Error checking playlist like:", err);
+      return res
+        .status(500)
+        .json({ error: "Unable to toggle like for playlist" });
+    }
+
+    if (results.length > 0) {
+      Playlist.removeLike(userId, playlistId, (err) => {
+        if (err) {
+          console.error("Error removing playlist like:", err);
+          return res
+            .status(500)
+            .json({ error: "Unable to toggle like for playlist" });
+        }
+
+        Playlist.updateLikeCount(playlistId, (err) => {
+          if (err) {
+            console.error("Error updating playlist like count:", err);
+            return res
+              .status(500)
+              .json({ error: "Unable to toggle like for playlist" });
+          }
+
+          res.json({ message: "Like removed successfully" });
+        });
+      });
+    } else {
+      Playlist.addLike(userId, playlistId, (err) => {
+        if (err) {
+          console.error("Error adding playlist like:", err);
+          return res
+            .status(500)
+            .json({ error: "Unable to toggle like for playlist" });
+        }
+
+        Playlist.updateLikeCount(playlistId, (err) => {
+          if (err) {
+            console.error("Error updating playlist like count:", err);
+            return res
+              .status(500)
+              .json({ error: "Unable to toggle like for playlist" });
+          }
+
+          res.json({ message: "Like added successfully" });
+        });
+      });
+    }
+  });
+};

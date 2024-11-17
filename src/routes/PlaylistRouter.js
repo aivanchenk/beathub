@@ -14,5 +14,6 @@ router.post("/add-song", PlaylistController.addSongToPlaylist);
 router.post("/remove-song", PlaylistController.deleteSongFromPlaylist);
 
 router.post("/my-playlists", auth, PlaylistController.getPlaylistsByUserId);
+router.post("/like", auth, PlaylistController.toggleLikePlaylist);
 
 module.exports = router;
