@@ -54,7 +54,38 @@ class Song {
     db.query(sql, [songId], callback);
   }
 
-  // Other song-related methods as needed
+  static checkLike(userId, songId, callback) {
+    const sql = `
+      SELECT * FROM song_likes WHERE user_id = ? AND song_id = ?
+    `;
+    db.query(sql, [userId, songId], callback);
+  }
+
+  static addLike(userId, songId, callback) {
+    const sql = `
+      INSERT INTO song_likes (user_id, song_id, liked_at)
+      VALUES (?, ?, NOW());
+    `;
+    db.query(sql, [userId, songId], callback);
+  }
+
+  static removeLike(userId, songId, callback) {
+    const sql = `
+      DELETE FROM song_likes WHERE user_id = ? AND song_id = ?
+    `;
+    db.query(sql, [userId, songId], callback);
+  }
+
+  static updateLikeCount(songId, callback) {
+    const sql = `
+      UPDATE songs
+      SET likes_count = (
+        SELECT COUNT(*) FROM song_likes WHERE song_id = ?
+      )
+      WHERE song_id = ?;
+    `;
+    db.query(sql, [songId, songId], callback);
+  }
 }
 
 module.exports = Song;

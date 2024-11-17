@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const PlaylistController = require("../controllers/PlaylistController");
+const auth = require("../middleware/auth");
 
 router.get("/", PlaylistController.getAllPlaylists);
 router.get("/:id", PlaylistController.getPlaylistById);
@@ -11,5 +12,7 @@ router.delete("/:id", PlaylistController.deletePlaylist);
 
 router.post("/add-song", PlaylistController.addSongToPlaylist);
 router.post("/remove-song", PlaylistController.deleteSongFromPlaylist);
+
+router.post("/my-playlists", auth, PlaylistController.getPlaylistsByUserId);
 
 module.exports = router;

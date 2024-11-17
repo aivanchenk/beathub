@@ -177,3 +177,15 @@ exports.deleteSongFromPlaylist = (req, res) => {
     });
   });
 };
+
+exports.getPlaylistsByUserId = (req, res) => {
+  const userId = req.user.id;
+
+  Playlist.getPlaylistsByUserId(userId, (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: "Database error", details: err });
+    }
+
+    res.json(results);
+  });
+};

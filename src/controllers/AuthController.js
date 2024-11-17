@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const nodemailer = require("nodemailer");
+const blacklist = require("../middleware/blacklist");
 const crypto = require("crypto");
 
 // User Registration
@@ -233,4 +234,16 @@ exports.resetPassword = async (req, res) => {
     console.error("Error caught in try/catch block:", err);
     res.status(500).send("Server error");
   }
+};
+
+exports.logout = (req, res) => {
+  const token = req.header("x-auth-token");
+
+  if (!token) {
+    return res.status(400).json({ msg: "No token provided" });
+  }
+
+  blacklist.add(token);
+
+  res.status(200).json({ msg: "Logged out successfully" });
 };

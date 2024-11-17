@@ -88,12 +88,17 @@ exports.addUser = async (req, res) => {
 
 exports.deleteUser = (req, res) => {
   const { id } = req.params;
+  const { id: userId, role } = req.user;
+
+  if (id !== userId.toString() && role !== "admin") {
+    return res.status(403).json({ error: "Unauthorized to delete this user" });
+  }
 
   User.deletUserById(id, (err, result) => {
     if (err) {
       if (err.code === "ER_ROW_IS_REFERENCED_2") {
         return res.status(400).json({
-          error: "Cannot delete user",
+          error: "Cannot delete user, related data exists",
         });
       }
       return res.status(500).json({ error: "Error deleting user" });
@@ -103,7 +108,7 @@ exports.deleteUser = (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.status(201).json({
+    res.status(200).json({
       message: "User deleted successfully",
     });
   });

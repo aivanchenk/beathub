@@ -7,7 +7,7 @@ router.get("/:id", UserController.getUserbyId);
 router.get("/", UserController.getAllUsers);
 router.put("/:id", UserController.updateUserById);
 router.post("/", UserController.addUser);
-router.delete("/:id", UserController.deleteUser);
+router.delete("/:id", auth, UserController.deleteUser);
 router.get("/:id/collections", UserController.getSongsAndPlaylistsByUserId);
 
 router.get(

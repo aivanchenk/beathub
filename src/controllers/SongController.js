@@ -82,3 +82,57 @@ exports.getSongById = (req, res) => {
     res.status(200).json(result[0]);
   });
 };
+
+exports.toggleLikeSong = (req, res) => {
+  const userId = req.user.id;
+  const { songId } = req.body;
+
+  Song.checkLike(userId, songId, (err, results) => {
+    if (err) {
+      console.error("Error checking song like:", err);
+      return res.status(500).json({ error: "Unable to toggle like for song" });
+    }
+
+    if (results.length > 0) {
+      Song.removeLike(userId, songId, (err) => {
+        if (err) {
+          console.error("Error removing song like:", err);
+          return res
+            .status(500)
+            .json({ error: "Unable to toggle like for song" });
+        }
+
+        Song.updateLikeCount(songId, (err) => {
+          if (err) {
+            console.error("Error updating song like count:", err);
+            return res
+              .status(500)
+              .json({ error: "Unable to toggle like for song" });
+          }
+
+          res.json({ message: "Like removed successfully" });
+        });
+      });
+    } else {
+      Song.addLike(userId, songId, (err) => {
+        if (err) {
+          console.error("Error adding song like:", err);
+          return res
+            .status(500)
+            .json({ error: "Unable to toggle like for song" });
+        }
+
+        Song.updateLikeCount(songId, (err) => {
+          if (err) {
+            console.error("Error updating song like count:", err);
+            return res
+              .status(500)
+              .json({ error: "Unable to toggle like for song" });
+          }
+
+          res.json({ message: "Like added successfully" });
+        });
+      });
+    }
+  });
+};
