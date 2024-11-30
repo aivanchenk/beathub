@@ -1,9 +1,15 @@
 import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
-
+import axios from "axios";
 import "./song-list.scss";
 
-const SongsList = ({ songs, artistNames, onSongClick }) => {
+const SongsList = ({
+  songs,
+  artistNames,
+  onSongClick,
+  playlistId,
+  onSongRemoved,
+}) => {
   const [currentSongIndex, setCurrentSongIndex] = useState(null); // Track the currently playing song
   const [isPlaying, setIsPlaying] = useState(false); // Track if audio is playing
   const audioRef = useRef(null);
@@ -46,6 +52,21 @@ const SongsList = ({ songs, artistNames, onSongClick }) => {
     }
   };
 
+  const handleDeleteSong = async (songId) => {
+    try {
+      await axios.post("http://localhost:5000/api/playlists/remove-song", {
+        playlistId,
+        songId,
+      });
+
+      if (onSongRemoved) {
+        onSongRemoved(songId); // Notify parent component to update song list
+      }
+    } catch (error) {
+      console.error("Error removing song from playlist:", error);
+    }
+  };
+
   return (
     <div className="songs-list">
       <audio ref={audioRef} onEnded={handleEnd} controls></audio>
@@ -68,15 +89,26 @@ const SongsList = ({ songs, artistNames, onSongClick }) => {
                   </p>
                 </div>
               </div>
-              <button
-                className="song-play-button"
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent triggering the song details on play button click
-                  handlePlayPause(index);
-                }}
-              >
-                {currentSongIndex === index && isPlaying ? "⏸" : "▶"}
-              </button>
+              <div className="song-actions">
+                <button
+                  className="song-play-button"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering the song details on play button click
+                    handlePlayPause(index);
+                  }}
+                >
+                  {currentSongIndex === index && isPlaying ? "⏸" : "▶"}
+                </button>
+                <button
+                  className="song-delete-button"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering song details on delete button click
+                    handleDeleteSong(song.song_id);
+                  }}
+                >
+                  🗑
+                </button>
+              </div>
             </div>
           </li>
         ))}
@@ -96,6 +128,8 @@ SongsList.propTypes = {
   ).isRequired,
   artistNames: PropTypes.object.isRequired,
   onSongClick: PropTypes.func.isRequired, // Callback for song click
+  playlistId: PropTypes.number.isRequired, // Playlist ID for API request
+  onSongRemoved: PropTypes.func, // Callback for when a song is removed
 };
 
 export default SongsList;

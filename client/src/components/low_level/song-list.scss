@@ -74,6 +74,19 @@
           background: #0056b3;
         }
       }
+
+      .song-delete-button {
+        background: #fc3030;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+
+        &:hover {
+          background: #a31717;
+        }
+      }
     }
   }
 }

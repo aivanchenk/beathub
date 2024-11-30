@@ -88,6 +88,17 @@ const PlaylistDetails = ({ id, onPlaylistDelete, onSongClick }) => {
     }
   };
 
+  const handleSongRemoved = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/playlists/${id}/songs`
+      );
+      setSongs(response.data); // Reload the song list from backend
+    } catch (error) {
+      console.error("Error reloading songs after deletion:", error);
+    }
+  };
+
   if (!playlist) return <p>Loading playlist details...</p>;
 
   return (
@@ -113,6 +124,8 @@ const PlaylistDetails = ({ id, onPlaylistDelete, onSongClick }) => {
         songs={songs}
         artistNames={artistNames}
         onSongClick={onSongClick}
+        playlistId={id}
+        onSongRemoved={handleSongRemoved}
       />
 
       <CreatePlaylistModal

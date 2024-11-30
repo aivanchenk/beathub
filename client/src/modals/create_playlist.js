@@ -62,7 +62,7 @@ const CreatePlaylistModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay create-playlist" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <h2>{playlistToUpdate ? "Update Playlist" : "Create Playlist"}</h2>
         {message && <p className="message">{message}</p>}

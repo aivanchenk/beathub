@@ -9,6 +9,15 @@
   max-width: 400px;
   margin: 0 auto;
   text-align: center;
+
+  .play-pause-button {
+    display: none;
+  }
+
+  audio {
+    margin-top: 1rem;
+    width: 250px;
+  }
 }
 
 .song-poster {
@@ -29,11 +38,108 @@
 
 .song-details-container p {
   font-size: 16px;
-  margin: 5px 0;
+  margin: 0;
   color: #555;
 }
 
 .song-details-container p span {
   font-weight: bold;
   color: #333;
+}
+
+.feedback-section {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.feedback-section h4 {
+  margin-bottom: 10px;
+  font-size: 20px;
+  color: #333;
+}
+
+.feedback-list {
+  list-style: none;
+  padding: 0;
+}
+
+.feedback-item {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.feedback-item:last-child {
+  border-bottom: none;
+}
+
+.feedback-text {
+  font-style: italic;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.feedback-meta {
+  font-size: 14px;
+  color: #777;
+}
+
+.feedback-meta span {
+  margin-right: 10px;
+}
+
+.feedback-section {
+  margin-top: 20px;
+}
+
+.feedback-section h4 {
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.feedback-list {
+  list-style: none;
+  padding: 0;
+}
+
+.feedback-item {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #fff;
+}
+
+.feedback-item p {
+  margin: 0;
+}
+
+.feedback-meta {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.feedback-form {
+  margin-top: 20px;
+}
+
+.feedback-form textarea {
+  width: 100%;
+  min-height: 80px;
+  resize: none;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+}
+
+.feedback-form textarea:focus {
+  border-color: #007bff;
+  outline: none;
 }

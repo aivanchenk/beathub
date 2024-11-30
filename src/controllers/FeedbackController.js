@@ -2,9 +2,15 @@ const Feedback = require("../models/Feedback");
 
 // Add feedback
 exports.addFeedback = (req, res) => {
-  const { userId, songId, feedbackText } = req.body;
+  const { songId, feedbackText } = req.body;
 
-  if (!userId || !songId || !feedbackText) {
+  if (!req.user || !req.user.id) {
+    return res.status(401).json({ error: "Unauthorized: No user ID found" });
+  }
+
+  const userId = req.user.id;
+
+  if (!songId || !feedbackText) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
