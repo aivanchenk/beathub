@@ -1,0 +1,20 @@
+.gradient-bar {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.gradient {
+  height: 20px;
+  width: 250px;
+  background: linear-gradient(to right, #ff7e5f, #fc77d2, #9d5fff);
+  border-radius: 5px;
+}
+
+.arrow {
+  width: 0;
+  height: 0;
+  border-top: 20px solid transparent;
+  border-bottom: 20px solid transparent;
+  border-left: 30px solid #d4ff00;
+}

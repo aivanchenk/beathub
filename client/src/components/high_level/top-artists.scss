@@ -1,0 +1,68 @@
+.top-artists {
+  margin: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    a {
+      font-size: 14px;
+      color: #007bff;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .artists-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    overflow-x: auto;
+
+    .artist-card {
+      flex: 0 0 auto;
+      width: 120px;
+      text-align: center;
+
+      .artist-poster {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 10px;
+      }
+
+      .artist-info {
+        .artist-name {
+          font-size: 14px;
+          font-weight: 600;
+          color: #333;
+          margin-bottom: 5px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .artist-plays {
+          font-size: 12px;
+          color: #666;
+        }
+      }
+    }
+  }
+}

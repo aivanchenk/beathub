@@ -1,16 +1,17 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import ListenerPage from "./pages/listener";
-import PlaylistDetail from "./pages/playlist";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Main from "./pages/main";
+import MusicPlayer from "./pages/music_player";
 
 function App() {
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
-        <Route path="/" element={<ListenerPage />} />{" "}
-        <Route path="/playlists/:id" element={<PlaylistDetail />} />{" "}
+        <Route path="/" element={<Main />} />
+        <Route path="/music-player" element={<MusicPlayer />} />
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 }
 

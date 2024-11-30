@@ -3,12 +3,18 @@ const db = require("../config/db");
 class Playlist {
   static getPlaylistsByUserId(userId, callback) {
     const sql = `
-    SELECT p.playlist_id, p.name, p.description, p.created_by, p.created_at,
-    COUNT(ps.song_id) AS song_count
+      SELECT 
+      p.playlist_id, 
+      p.name, 
+      p.description, 
+      p.created_by, 
+      p.created_at, 
+      p.poster, 
+      COUNT(ps.song_id) AS song_count
     FROM playlists p
     LEFT JOIN playlist_songs ps ON p.playlist_id = ps.playlist_id
     WHERE p.created_by = ?
-    GROUP BY p.playlist_id
+    GROUP BY p.playlist_id;
   `;
     db.query(sql, [userId], callback);
   }

@@ -1,0 +1,127 @@
+.playlist-details {
+  padding: 20px;
+
+  .delete-button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    margin-top: 15px;
+
+    &:hover {
+      background-color: #e60000;
+    }
+  }
+
+  .message {
+    margin-top: 10px;
+    color: green;
+    font-size: 0.9rem;
+  }
+
+  .playlist-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+
+    .playlist-poster {
+      width: 100px;
+      height: 100px;
+      border-radius: 8px;
+      margin-right: 15px;
+      object-fit: cover;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    p {
+      color: #555;
+      font-size: 0.9rem;
+    }
+  }
+
+  .songs-list {
+    h4 {
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+
+      .song-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+
+        .song-details {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+
+          .song-rank {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-right: 10px;
+          }
+
+          .song-poster {
+            width: 50px;
+            height: 50px;
+            border-radius: 4px;
+            margin-right: 10px;
+            object-fit: cover;
+          }
+
+          .song-info {
+            .song-title {
+              font-weight: bold;
+              margin: 0;
+            }
+
+            .song-artist {
+              color: #555;
+              font-size: 0.8rem;
+            }
+          }
+        }
+
+        .song-meta {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+
+          .song-duration {
+            color: #555;
+            font-size: 0.8rem;
+          }
+
+          .song-play-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+
+            &:hover {
+              background: #0056b3;
+            }
+          }
+        }
+      }
+    }
+  }
+}

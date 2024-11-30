@@ -1,0 +1,53 @@
+.left-side-menu {
+  width: 200px;
+  background-color: #fff;
+  padding: 20px;
+  border-right: 2px solid #dcdcdc;
+  height: 100%;
+  font-family: Arial, sans-serif;
+  position: fixed;
+
+  .menu-section {
+    margin-bottom: 20px;
+
+    .menu-title {
+      font-size: 14px;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      color: #555;
+    }
+
+    .menu-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      .menu-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        font-size: 14px;
+        color: #333;
+        cursor: pointer;
+        transition: background-color 0.3s ease, color 0.3s ease;
+
+        .menu-icon {
+          margin-right: 10px;
+          font-size: 18px;
+        }
+
+        &:hover {
+          background-color: #f0f0f0;
+          color: #007bff;
+        }
+
+        &.active {
+          color: #007bff;
+          background-color: #e7f3ff;
+          border-left: 3px solid #007bff;
+        }
+      }
+    }
+  }
+}

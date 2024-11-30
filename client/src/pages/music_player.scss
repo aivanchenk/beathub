@@ -1,0 +1,11 @@
+.player-page {
+  overflow: auto;
+  margin-left: 250px;
+  overflow-y: auto;
+}
+
+.page-content:has(.right-sidebar) {
+  .player-page {
+    margin-right: 300px;
+  }
+}

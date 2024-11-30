@@ -1,0 +1,35 @@
+.custom-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: "Arial", sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 15px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.custom-button.primary {
+  background-color: #d4ff00;
+  color: black;
+}
+
+.custom-button.primary:hover {
+  background-color: #c0e800;
+}
+
+.custom-button.secondary {
+  background: none;
+  color: black;
+  border: 2px solid transparent;
+}
+
+.custom-button.secondary:hover {
+  color: #555;
+  border-color: #555;
+}

@@ -1,0 +1,37 @@
+nav {
+  position: fixed;
+  top: 0;
+  width: calc(100% - 40px);
+  max-height: 100px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  z-index: 100;
+  border-bottom: 2px solid #e0e0e0;
+
+  img.logo {
+    height: 60px;
+  }
+
+  .menu {
+    display: flex;
+    gap: 20px;
+  }
+
+  .vertical-divider {
+    width: 1px;
+    background: #000;
+  }
+}
+
+@media (max-width: 768px) {
+  nav .menu {
+    gap: 5px;
+  }
+
+  nav {
+    padding: 20px 10px;
+  }
+}

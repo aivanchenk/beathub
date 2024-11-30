@@ -1,0 +1,152 @@
+.hero-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5rem;
+}
+
+.hero-content {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+  }
+}
+
+.hero-image {
+  position: relative;
+  height: 100%;
+
+  .listener-image img:last-of-type {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  .listener-image img:first-of-type {
+    position: relative;
+    z-index: 10;
+  }
+}
+
+.hero-section,
+.popular-section {
+  .headline {
+    font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+    font-size: 4.5rem;
+    font-weight: bold;
+    margin: 0 0 1rem;
+    color: #222;
+    text-transform: uppercase;
+    z-index: 20;
+  }
+
+  .subtext {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 2rem;
+    width: 60%;
+  }
+}
+
+.popular-content {
+  width: 75%;
+
+  .headline {
+    font-size: 3rem;
+  }
+}
+
+.popular-section {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.explore-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 140px;
+  height: 70px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.arrow-box {
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.arrow-box:nth-child(1) {
+  background-color: white;
+  transform: rotate(180deg);
+}
+
+.arrow-box:nth-child(2) {
+  background-color: #d4ff00;
+}
+
+.authors-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+@media (max-width: 996px) {
+  .hero-section {
+    .headline {
+      font-size: 3rem;
+    }
+
+    .subtext {
+      font-size: 1rem;
+    }
+  }
+
+  .hero-content,
+  .popular-content,
+  .hero-section .subtext,
+  .popular-section .subtext {
+    width: 100%;
+  }
+
+  .hero-image .listener-image img:last-of-type {
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  .hero-image .listener-image img:first-of-type {
+    width: 90%;
+  }
+
+  .hero-image {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .popular-section .explore-button-container {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    flex-direction: column;
+  }
+}

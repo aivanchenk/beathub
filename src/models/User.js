@@ -86,6 +86,15 @@ class User {
       callback(null, results);
     });
   }
+
+  static updateUserRole(userId, newRole, callback) {
+    const sql = `
+      UPDATE users
+      SET role = ?
+      WHERE user_id = ?
+    `;
+    db.query(sql, [newRole, userId], callback);
+  }
 }
 
 module.exports = User;

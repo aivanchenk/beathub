@@ -16,5 +16,6 @@ router.get(
 );
 
 router.post("/user-data", auth, UserController.updateUserData);
+router.post("/role", auth, UserController.updateUserRole);
 
 module.exports = router;

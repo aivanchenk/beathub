@@ -1,0 +1,82 @@
+.footer {
+  background: url("../../assests/main_page/glowing-background-vector.jpg")
+    no-repeat;
+  background-repeat: repeat-x; /* Repeat the image horizontally */
+  background-size: auto; /* Default size to avoid stretching */
+
+  padding: 20px 40px;
+  border-top: 2px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-top: 3rem;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.724); /* Adjust color and opacity */
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+
+    .footer-left,
+    .footer-middle,
+    .footer-right {
+      flex: 1;
+      margin: 10px 20px;
+
+      h2,
+      h3 {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        z-index: 1;
+        position: relative;
+      }
+
+      p {
+        font-size: 14px;
+        color: #000;
+        margin: 5px 0;
+        z-index: 1;
+        position: relative;
+      }
+    }
+
+    .footer-right ul {
+      list-style: none;
+      padding: 0;
+
+      li {
+        margin-bottom: 5px;
+      }
+    }
+  }
+
+  .footer-bottom {
+    text-align: center;
+    z-index: 1;
+    position: relative;
+
+    p {
+      font-size: 14px;
+      color: #777;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .footer .footer-container {
+    flex-direction: column;
+  }
+}
