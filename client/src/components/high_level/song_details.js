@@ -3,6 +3,9 @@ import axios from "axios";
 import FeedbackItem from "../low_level/feedback";
 import Notification from "../low_level/notification";
 import Button from "../low_level/button";
+import AddSongModal from "../../modals/add_song";
+import { useAuth } from "../../contexts/auth_context";
+
 import "./song-details.scss";
 
 import FallbackImage from "../../assests/icons/unnamed.jpg";
@@ -14,7 +17,9 @@ const SongDetails = ({ id }) => {
   const [newFeedback, setNewFeedback] = useState("");
   const [notification, setNotification] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
   const audioRef = useRef(null);
+  const { userRole } = useAuth();
 
   useEffect(() => {
     const fetchSongDetails = async () => {
@@ -64,7 +69,7 @@ const SongDetails = ({ id }) => {
   const handleSubmitFeedback = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem("token"); // Get token for authentication
+    const token = localStorage.getItem("token");
     if (!token) {
       setNotification({
         type: "error",
@@ -82,7 +87,7 @@ const SongDetails = ({ id }) => {
         },
         {
           headers: {
-            "x-auth-token": token, // Send token in headers
+            "x-auth-token": token,
           },
         }
       );
@@ -105,13 +110,57 @@ const SongDetails = ({ id }) => {
     }
   };
 
+  const handleDeleteSong = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setNotification({
+        type: "error",
+        message: "You must be logged in to delete a song.",
+      });
+      return;
+    }
+
+    try {
+      await axios.delete(`http://localhost:5000/api/songs/${id}`, {
+        headers: {
+          "x-auth-token": token,
+        },
+      });
+
+      setNotification({
+        type: "success",
+        message: "Song deleted successfully!",
+      });
+      window.location.reload();
+    } catch (error) {
+      console.error("Error deleting song:", error);
+      setNotification({
+        type: "error",
+        message: "Failed to delete the song. Please try again.",
+      });
+    }
+  };
+
+  const handleUpdateSong = () => {
+    setModalOpen(true);
+  };
+
+  const validateImagePath = (poster) => {
+    try {
+      return require(`../../assests/posters/${poster}`);
+    } catch (error) {
+      return FallbackImage;
+    }
+  };
+
   if (!songDetails) return <p>Loading song details...</p>;
 
   return (
     <>
       <div className="song-details-container">
         <img
-          src={require(`../../assests/posters/${songDetails.poster}`)}
+          src={validateImagePath(songDetails.poster)}
           alt={songDetails.name}
           className="song-poster"
           onError={(e) => {
@@ -138,6 +187,15 @@ const SongDetails = ({ id }) => {
           </button>
         </div>
       </div>
+
+      {(userRole === "author" || userRole === "admin") && (
+        <div className="song-actions">
+          <Button onClick={handleUpdateSong}>Update</Button>
+          <button className="song-delete-button" onClick={handleDeleteSong}>
+            Delete
+          </button>
+        </div>
+      )}
 
       <div className="feedback-section">
         <h4>Feedback</h4>
@@ -172,6 +230,12 @@ const SongDetails = ({ id }) => {
           onClose={() => setNotification(null)}
         />
       )}
+
+      <AddSongModal
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        songToUpdate={songDetails} // Pass song details for updating
+      />
     </>
   );
 };

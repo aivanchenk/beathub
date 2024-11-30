@@ -24,25 +24,37 @@ class Song {
   }
 
   static addSong(songData, callback) {
-    const { title, artist_id, genre, duration, added_by } = songData;
+    const { title, artist_id, genre, duration, added_by, poster, location } =
+      songData;
     const sql =
-      "INSERT INTO songs (name, artist_id, genre, duration, added_by) VALUES (?, ?, ?, ?, ?)";
-    db.query(sql, [title, artist_id, genre, duration, added_by], callback);
+      "INSERT INTO songs (name, artist_id, genre, duration, added_by, poster, location) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    db.query(
+      sql,
+      [title, artist_id, genre, duration, added_by, poster, location],
+      callback
+    );
   }
 
   static updateSongById(songId, data, callback) {
     let sql = "UPDATE songs SET ";
     const values = [];
 
+    // Correct the mapping for keys if necessary
+    const columnMapping = {
+      title: "name",
+      genre: "genre",
+      duration: "duration",
+      artist_id: "artist_id",
+    };
+
     for (const [key, value] of Object.entries(data)) {
-      if (value !== null && value !== undefined) {
-        sql += `${key} = ?, `;
+      if (value !== null && value !== undefined && columnMapping[key]) {
+        sql += `${columnMapping[key]} = ?, `;
         values.push(value);
       }
     }
 
     sql = sql.slice(0, -2);
-
     sql += " WHERE song_id = ?";
     values.push(songId);
 
