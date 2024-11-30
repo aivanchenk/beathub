@@ -12,5 +12,6 @@ router.put("/:id", auth, SongController.updateSong);
 router.delete("/:id", auth, SongController.deleteSong);
 
 router.post("/like", auth, SongController.toggleLikeSong);
+router.post("/user-songs", auth, SongController.getSongsByUser);
 
 module.exports = router;

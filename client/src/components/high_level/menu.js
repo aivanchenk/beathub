@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useAuth } from "../../contexts/auth_context";
 import { useNavigate } from "react-router-dom";
 import CreatePlaylistModal from "../../modals/create_playlist";
+import ChangeDataModal from "../../modals/change_data";
+import AddSongModal from "../../modals/add_song";
 
 import "./menu.scss";
 
@@ -10,7 +12,9 @@ const Menu = () => {
   const { logOut } = useAuth();
   const navigate = useNavigate();
 
-  const [isModalOpen, setModalOpen] = useState(false); // State to manage modal visibility
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [isChangeDataModalOpen, setChangeDataModalOpen] = useState(false);
+  const [isAddSongModalOpen, setAddSongModalOpen] = useState(false);
 
   const handleLogOut = async () => {
     await logOut();
@@ -37,29 +41,39 @@ const Menu = () => {
           <section className="menu-section">
             <h3 className="menu-title">Additional</h3>
             <ul className="menu-list">
-              <li className="menu-item">
+              <li
+                className="menu-item"
+                onClick={() => setAddSongModalOpen(true)}
+              >
                 <span className="menu-icon">🎧</span>
                 Add a song
               </li>
-              <li className="menu-item">
-                <span className="menu-icon">📚</span>
-                Change user role
-              </li>
-              <li className="menu-item">
-                <span className="menu-icon">🔗</span>
-                Verify feedback
-              </li>
+              {userRole == "admin" && (
+                <>
+                  <li className="menu-item">
+                    <span className="menu-icon">🎨</span>
+                    Create an artist
+                  </li>
+                  <li className="menu-item">
+                    <span className="menu-icon">📚</span>
+                    Change user role
+                  </li>
+                  <li className="menu-item">
+                    <span className="menu-icon">🔗</span>
+                    Verify feedback
+                  </li>
+                </>
+              )}
             </ul>
           </section>
         )}
         <section className="menu-section">
           <h3 className="menu-title">Others</h3>
           <ul className="menu-list">
-            <li className="menu-item">
-              <span className="menu-icon">❌</span>
-              Delete account
-            </li>
-            <li className="menu-item">
+            <li
+              className="menu-item"
+              onClick={() => setChangeDataModalOpen(true)}
+            >
               <span className="menu-icon">👤</span>
               Change my data
             </li>
@@ -71,14 +85,23 @@ const Menu = () => {
         </section>
       </aside>
 
-      {/* Create Playlist Modal */}
       {isLoggedIn && (
         <CreatePlaylistModal
           isOpen={isModalOpen}
           onClose={() => setModalOpen(false)}
-          userId={userId} // Pass user ID dynamically from the auth context
+          userId={userId}
         />
       )}
+
+      <ChangeDataModal
+        isOpen={isChangeDataModalOpen}
+        onClose={() => setChangeDataModalOpen(false)}
+      />
+
+      <AddSongModal
+        isOpen={isAddSongModalOpen}
+        onClose={() => setAddSongModalOpen(false)}
+      />
     </>
   );
 };

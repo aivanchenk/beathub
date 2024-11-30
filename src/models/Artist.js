@@ -52,6 +52,11 @@ class Artist {
       callback(null, results);
     });
   }
+
+  static getArtistByUserId(userId, callback) {
+    const sql = "SELECT * FROM artists WHERE user_id = ?";
+    db.query(sql, [userId], callback);
+  }
 }
 
 module.exports = Artist;

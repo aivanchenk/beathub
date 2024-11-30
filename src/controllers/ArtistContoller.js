@@ -47,3 +47,22 @@ exports.getSongsByArtist = (req, res) => {
     res.status(200).json({ songs: results });
   });
 };
+
+exports.getArtistsByUser = (req, res) => {
+  const userId = req.user.id;
+
+  Artist.getArtistByUserId(userId, (err, results) => {
+    if (err) {
+      console.error("Error fetching artists:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    if (results.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No artists found for this user." });
+    }
+
+    res.status(200).json({ artists: results });
+  });
+};

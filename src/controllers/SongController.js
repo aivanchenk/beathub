@@ -228,3 +228,20 @@ exports.toggleLikeSong = (req, res) => {
     }
   });
 };
+
+exports.getSongsByUser = (req, res) => {
+  const userId = req.user.id; // Extracted from the token middleware
+
+  Song.getSongsByUserId(userId, (err, results) => {
+    if (err) {
+      console.error("Error fetching songs by user:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "No songs found for this user." });
+    }
+
+    res.status(200).json({ songs: results });
+  });
+};
