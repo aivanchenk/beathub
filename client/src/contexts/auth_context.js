@@ -1,48 +1,46 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { jwtDecode } from "jwt-decode"; // Ensure this is imported correctly
+import axios from "axios";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState(null);
-  const [userId, setUserId] = useState(null); // New state for user ID
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const decodedToken = jwtDecode(token);
-        const isTokenExpired = decodedToken.exp * 1000 < Date.now();
-
-        if (!isTokenExpired) {
-          setIsLoggedIn(true);
-          setUserRole(decodedToken.user.role);
-          setUserId(decodedToken.user.id); // Set user ID from token
-          console.log(decodedToken.user.id);
-        } else {
-          localStorage.removeItem("token");
-        }
-      } catch (error) {
-        console.error("Failed to decode token:", error);
-        localStorage.removeItem("token");
+    const initializeAuth = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        await logIn(token);
       }
-    }
+    };
+
+    initializeAuth();
   }, []);
 
-  const logIn = (token) => {
+  const logIn = async (token) => {
     try {
-      const decodedToken = jwtDecode(token);
-      const isTokenExpired = decodedToken.exp * 1000 < Date.now();
+      const response = await axios.post(
+        "http://localhost:5000/api/users/role",
+        {},
+        {
+          headers: {
+            "x-auth-token": token,
+          },
+        }
+      );
 
-      if (!isTokenExpired) {
-        setIsLoggedIn(true);
-        setUserRole(decodedToken.user.role);
-        setUserId(decodedToken.user.id); // Set user ID from token
-        localStorage.setItem("token", token);
-      }
+      setIsLoggedIn(true);
+      setUserRole(response.data.role);
+      setUserId(response.data.id);
+      localStorage.setItem("token", token);
     } catch (error) {
-      console.error("Failed to decode token:", error);
+      console.error("Failed to validate token:", error);
+      localStorage.removeItem("token");
+      setIsLoggedIn(false);
+      setUserRole(null);
+      setUserId(null);
     }
   };
 

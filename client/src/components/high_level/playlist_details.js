@@ -2,14 +2,17 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CreatePlaylistModal from "../../modals/create_playlist";
 import Button from "../low_level/button";
+import SongsList from "../low_level/song-list";
+
 import FallbackImage from "../../assests/icons/unnamed.jpg";
 import "./playlist_details.scss";
 
-const PlaylistDetails = ({ id, onPlaylistDelete }) => {
+const PlaylistDetails = ({ id, onPlaylistDelete, onSongClick }) => {
   const [playlist, setPlaylist] = useState(null);
   const [songs, setSongs] = useState([]);
   const [message, setMessage] = useState("");
-  const [isModalOpen, setModalOpen] = useState(false); // Manage modal visibility
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [artistNames, setArtistNames] = useState({});
 
   useEffect(() => {
     const fetchPlaylist = async () => {
@@ -29,6 +32,30 @@ const PlaylistDetails = ({ id, onPlaylistDelete }) => {
           `http://localhost:5000/api/playlists/${id}/songs`
         );
         setSongs(response.data);
+
+        // Fetch artist names for each song
+        const artistIds = response.data.map((song) => song.artist_id);
+        const artistNamesMap = {};
+
+        await Promise.all(
+          artistIds.map(async (artistId) => {
+            if (!artistNamesMap[artistId]) {
+              try {
+                const artistResponse = await axios.get(
+                  `http://localhost:5000/api/artists/${artistId}`
+                );
+                artistNamesMap[artistId] = artistResponse.data.name;
+              } catch (error) {
+                console.error(
+                  `Error fetching artist with ID ${artistId}:`,
+                  error
+                );
+              }
+            }
+          })
+        );
+
+        setArtistNames(artistNamesMap);
       } catch (error) {
         console.error("Error fetching songs:", error);
       }
@@ -53,8 +80,6 @@ const PlaylistDetails = ({ id, onPlaylistDelete }) => {
     }
   };
 
-  if (!playlist) return <p>Loading playlist details...</p>;
-
   const validateImagePath = (poster) => {
     try {
       return require(`../../assests/playlists/${poster}`);
@@ -63,7 +88,7 @@ const PlaylistDetails = ({ id, onPlaylistDelete }) => {
     }
   };
 
-  console.log(playlist.id);
+  if (!playlist) return <p>Loading playlist details...</p>;
 
   return (
     <div className="playlist-details">
@@ -84,56 +109,19 @@ const PlaylistDetails = ({ id, onPlaylistDelete }) => {
         {message && <p className="message">{message}</p>}
       </div>
 
-      <div className="songs-list">
-        <h4>Top Songs</h4>
-        {songs.length > 0 ? (
-          <ul>
-            {songs.map((song, index) => (
-              <li key={song.song_id} className="song-item">
-                <div className="song-details">
-                  <span className="song-rank">{index + 1}</span>
-                  <img
-                    src={`/images/songs/${song.poster}`}
-                    alt={song.name}
-                    className="song-poster"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = FallbackImage;
-                    }}
-                  />
-                  <div className="song-info">
-                    <p className="song-title">{song.name}</p>
-                    <p className="song-artist">By Artist {song.artist_id}</p>
-                  </div>
-                </div>
-                <div className="song-meta">
-                  <p className="song-duration">
-                    {formatDuration(song.duration)}
-                  </p>
-                  <button className="song-play-button">▶</button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No songs found in this playlist.</p>
-        )}
-      </div>
+      <SongsList
+        songs={songs}
+        artistNames={artistNames}
+        onSongClick={onSongClick}
+      />
 
-      {/* Update Playlist Modal */}
       <CreatePlaylistModal
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
-        playlistToUpdate={playlist} // Pass playlist data for update
+        playlistToUpdate={playlist}
       />
     </div>
   );
-};
-
-const formatDuration = (duration) => {
-  const minutes = Math.floor(duration / 60);
-  const seconds = duration % 60;
-  return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
 };
 
 export default PlaylistDetails;

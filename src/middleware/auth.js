@@ -16,10 +16,9 @@ module.exports = function (req, res, next) {
       .json({ msg: "Token has been invalidated, please log in again" });
   }
 
-  // Verify token
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded.user; // Attach the decoded user to req
+    req.user = decoded.user;
     next();
   } catch (err) {
     return res.status(401).json({ msg: "Token is not valid" });

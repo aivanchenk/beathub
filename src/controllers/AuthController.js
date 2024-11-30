@@ -104,6 +104,8 @@ exports.login = (req, res) => {
           res.json({ token });
         }
       );
+
+      console.log("looged in");
     });
   } catch (err) {
     console.error("Error caught in try/catch block:", err);

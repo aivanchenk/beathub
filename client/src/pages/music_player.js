@@ -41,7 +41,10 @@ function MusicPlayer() {
           {sidebarData && (
             <div>
               {sidebarData.type === "playlist" && (
-                <PlaylistDetails id={sidebarData.playlist_id} />
+                <PlaylistDetails
+                  id={sidebarData.playlist_id}
+                  onSongClick={(song) => handleCardClick(song, "song")}
+                />
               )}
               {sidebarData.type === "song" && (
                 <SongDetails id={sidebarData.song_id} />

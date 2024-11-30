@@ -149,11 +149,9 @@ exports.updateUserRole = (req, res) => {
   // Validate the new role (must match ENUM values)
   const validRoles = ["listener", "author", "admin"];
   if (!validRoles.includes(newRole)) {
-    return res
-      .status(400)
-      .json({
-        error: `Invalid role. Valid roles are: ${validRoles.join(", ")}`,
-      });
+    return res.status(400).json({
+      error: `Invalid role. Valid roles are: ${validRoles.join(", ")}`,
+    });
   }
 
   // Proceed to update the role
@@ -168,5 +166,23 @@ exports.updateUserRole = (req, res) => {
     }
 
     res.status(200).json({ message: "User role updated successfully" });
+  });
+};
+
+exports.getUserRoleByToken = (req, res) => {
+  const userId = req.user.id;
+
+  User.getUserById(userId, (err, results) => {
+    if (err) {
+      console.error("Error querying the database:", err);
+      return res.status(500).json({ error: "Server error" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const user = results[0];
+    res.status(200).json({ id: user.user_id, role: user.role });
   });
 };
