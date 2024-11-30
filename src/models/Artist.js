@@ -33,6 +33,25 @@ class Artist {
       callback(null, results[0]);
     });
   }
+
+  static getSongsByArtist(artistId, callback) {
+    const sql = `
+      SELECT 
+        song_id, artist_id, name, genre, duration, plays_count, likes_count, poster, location, added_by, added_at
+      FROM 
+        songs
+      WHERE 
+        artist_id = ?;
+    `;
+
+    db.query(sql, [artistId], (err, results) => {
+      if (err) {
+        console.error("Error fetching songs by artist:", err);
+        return callback(err, null);
+      }
+      callback(null, results);
+    });
+  }
 }
 
 module.exports = Artist;

@@ -4,5 +4,6 @@ const artistController = require("../controllers/ArtistContoller");
 
 router.get("/top-artists", artistController.getTopArtists);
 router.get("/:id", artistController.getArtistById);
+router.get("/songs/:id", artistController.getSongsByArtist);
 
 module.exports = router;

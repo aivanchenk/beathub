@@ -43,7 +43,7 @@ const Menu = () => {
               </li>
               <li className="menu-item">
                 <span className="menu-icon">📚</span>
-                Publish album
+                Change user role
               </li>
               <li className="menu-item">
                 <span className="menu-icon">🔗</span>
@@ -56,8 +56,8 @@ const Menu = () => {
           <h3 className="menu-title">Others</h3>
           <ul className="menu-list">
             <li className="menu-item">
-              <span className="menu-icon">⚙️</span>
-              Reset password
+              <span className="menu-icon">❌</span>
+              Delete account
             </li>
             <li className="menu-item">
               <span className="menu-icon">👤</span>

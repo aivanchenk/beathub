@@ -21,6 +21,7 @@
 
       .song-content {
         display: flex;
+        margin-right: 10px;
       }
 
       &.active {
@@ -60,6 +61,11 @@
             margin: 0;
           }
         }
+      }
+
+      .song-actions {
+        display: flex;
+        gap: 10px;
       }
 
       .song-play-button {
